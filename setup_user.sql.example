@@ -1,0 +1,5 @@
+-- Copy this file to setup_user.sql and fill in your password
+CREATE USER IF NOT EXISTS 'album_app'@'localhost' IDENTIFIED BY 'your_strong_password_here';
+GRANT SELECT, INSERT, UPDATE, DELETE ON album_db.* TO 'album_app'@'localhost';
+GRANT SHOW VIEW ON album_db.* TO 'album_app'@'localhost';
+FLUSH PRIVILEGES;
