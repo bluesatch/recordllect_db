@@ -170,6 +170,21 @@ CREATE TABLE album_genres (
 );
 
 -- =============================================================
+-- USER COLLECTIONS
+-- =============================================================
+
+CREATE TABLE user_albums (
+    user_album_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_user_album PRIMARY KEY (user_album_id),
+    CONSTRAINT uq_user_album UNIQUE (users_id, album_id),
+    CONSTRAINT fk_ua_user FOREIGN KEY (users_id) REFERENCES users (users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ua_album FOREIGN KEY (album_id) REFERENCES albums (album_id) ON DELETE CASCADE
+);
+
+-- =============================================================
 -- INDEXES
 -- =============================================================
 
@@ -179,6 +194,8 @@ CREATE INDEX idx_albums_format ON albums (format_id);
 CREATE INDEX idx_band_members_artist ON band_members (artist_id);
 CREATE INDEX idx_artist_instruments_instrument ON artist_instruments (instrument_id);
 CREATE INDEX idx_follows_following ON follows (following_id);
+CREATE INDEX idx_user_albums_user ON user_albums (users_id);
+CREATE INDEX idx_user_albums_album ON user_albums (album_id);
 
 -- =============================================================
 -- VIEWS
