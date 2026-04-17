@@ -21,6 +21,7 @@ CREATE TABLE users (
     status ENUM('active', 'inactive', 'suspended', 'pending_verification') NOT NULL DEFAULT 'pending_verification',
     email_verified_at TIMESTAMP NULL DEFAULT NULL,
     profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
+    is_admin TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_user PRIMARY KEY (users_id)
