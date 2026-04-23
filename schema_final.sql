@@ -8,6 +8,7 @@ USE `album_db`;
 
 CREATE TABLE users (
     users_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -186,6 +187,22 @@ CREATE TABLE user_albums (
 );
 
 -- =============================================================
+-- USER_TOP_EIGHT
+-- =============================================================
+
+CREATE TABLE user_top_eight (
+    top_eight_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    users_id BIGINT UNSIGNED NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    position TINYINT NOT NULL CHECK (position BETWEEN 1 AND 8),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_position (users_id, position),
+    UNIQUE KEY unique_user_album (users_id, album_id)
+);
+
+-- =============================================================
 -- INDEXES
 -- =============================================================
 
@@ -205,6 +222,7 @@ CREATE INDEX idx_user_albums_album ON user_albums (album_id);
 CREATE VIEW v_album_details AS
 SELECT
     a.album_id,
+    a.performer_id,
     a.title,
     a.release_year,
     a.duration_seconds,
