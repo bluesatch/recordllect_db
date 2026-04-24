@@ -22,6 +22,7 @@ CREATE TABLE users (
     status ENUM('active', 'inactive', 'suspended', 'pending_verification') NOT NULL DEFAULT 'pending_verification',
     email_verified_at TIMESTAMP NULL DEFAULT NULL,
     profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
+    bio VARCHAR(500) NULL DEFAULT NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -59,6 +60,8 @@ CREATE TABLE artists (
     alias VARCHAR(150),
     date_of_birth DATE NULL DEFAULT NULL,
     date_of_death DATE NULL DEFAULT NULL,
+    bio VARCHAR(500) NULL DEFAULT NULL,
+    profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_artist PRIMARY KEY (artist_id),
@@ -71,6 +74,8 @@ CREATE TABLE bands (
     band_name VARCHAR(255) NOT NULL,
     formed_year YEAR NULL DEFAULT NULL,
     disbanded_year YEAR NULL DEFAULT NULL,
+    bio VARCHAR(500) NULL DEFAULT NULL,
+    profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
     country VARCHAR(100) NULL DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -203,6 +208,23 @@ CREATE TABLE user_top_eight (
 );
 
 -- =============================================================
+-- WANTLIST
+-- =============================================================
+
+CREATE TABLE wantlists (
+    wantlist_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    notes VARCHAR(500) NULL DEFAULT NULL,
+    priority ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'medium',
+    added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_wantlist PRIMARY KEY (wantlist_id),
+    CONSTRAINT uq_wantlist UNIQUE (users_id, album_id),
+    CONSTRAINT fk_wl_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_wl_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
+);
+
+-- =============================================================
 -- INDEXES
 -- =============================================================
 
@@ -300,4 +322,7 @@ INSERT INTO genres (genre_name) VALUES
     ('Disco'),
     ('Bebop'),
     ('Avant-Garde'),
-    ('Vocal');
+    ('Vocal'),
+    ('Rap'),
+    ('Soundtrack'),
+    ('World');
