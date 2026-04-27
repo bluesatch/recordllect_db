@@ -225,6 +225,92 @@ CREATE TABLE wantlists (
 );
 
 -- =============================================================
+-- FOR SOCIAL FEED
+-- =============================================================
+
+CREATE TABLE posts (
+    post_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    body VARCHAR(2000) NULL DEFAULT NULL,
+    image_url VARCHAR(2048) NULL DEFAULT NULL,
+    video_url VARCHAR(2048) NULL DEFAULT NULL,
+    alt_text VARCHAR(500) NULL DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_post PRIMARY KEY (post_id),
+    CONSTRAINT fk_post_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tags (
+    tag_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    tag_name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_tag PRIMARY KEY (tag_id)
+);
+
+CREATE TABLE post_tags (
+    post_id BIGINT UNSIGNED NOT NULL,
+    tag_id BIGINT UNSIGNED NOT NULL,
+    CONSTRAINT pk_post_tag PRIMARY KEY (post_id, tag_id),
+    CONSTRAINT fk_pt_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pt_tag FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
+);
+
+CREATE TABLE post_likes (
+    like_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    post_id BIGINT UNSIGNED NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_post_like PRIMARY KEY (like_id),
+    CONSTRAINT uq_post_like UNIQUE (post_id, users_id),
+    CONSTRAINT fk_pl_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pl_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+CREATE TABLE comments (
+    comment_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    post_id BIGINT UNSIGNED NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    body VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_comment PRIMARY KEY (comment_id),
+    CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    CONSTRAINT fk_comment_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+CREATE TABLE comment_likes (
+    like_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    comment_id BIGINT UNSIGNED NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_comment_like PRIMARY KEY (like_id),
+    CONSTRAINT uq_comment_like UNIQUE (comment_id, users_id),
+    CONSTRAINT fk_cl_comment FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
+    CONSTRAINT fk_cl_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+CREATE TABLE replies (
+    reply_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    comment_id BIGINT UNSIGNED NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    body VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_reply PRIMARY KEY (reply_id),
+    CONSTRAINT fk_reply_comment FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
+    CONSTRAINT fk_reply_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_genres (
+    users_id BIGINT UNSIGNED NOT NULL,
+    genre_id BIGINT UNSIGNED NOT NULL,
+    CONSTRAINT pk_user_genre PRIMARY KEY (users_id, genre_id),
+    CONSTRAINT fk_ug_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ug_genre FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE
+);
+
+-- =============================================================
 -- INDEXES
 -- =============================================================
 
@@ -236,6 +322,14 @@ CREATE INDEX idx_artist_instruments_instrument ON artist_instruments (instrument
 CREATE INDEX idx_follows_following ON follows (following_id);
 CREATE INDEX idx_user_albums_user ON user_albums (users_id);
 CREATE INDEX idx_user_albums_album ON user_albums (album_id);
+
+-- INDEXES FOR PERFORMANCE
+CREATE INDEX idx_posts_users ON posts(users_id);
+CREATE INDEX idx_posts_created ON posts(created_at);
+CREATE INDEX idx_comments_post ON comments(post_id);
+CREATE INDEX idx_replies_comment ON replies(comment_id);
+CREATE INDEX idx_post_likes_post ON post_likes(post_id);
+CREATE INDEX idx_comment_likes_comment ON comment_likes(comment_id);
 
 -- =============================================================
 -- VIEWS
@@ -326,3 +420,40 @@ INSERT INTO genres (genre_name) VALUES
     ('Rap'),
     ('Soundtrack'),
     ('World');
+
+INSERT INTO genres (genre_name) VALUES 
+('Neo-Soul'),
+('Hard Bop'),
+('Heavy Metal'),
+('Prog Rock'),
+('Comedy'),
+('New Wave'),
+('Punk Rock'),
+('Techno'),
+('House'),
+('Synth'),
+('African Highlife'),
+('Miscellaneous'),
+('Compilation'),
+('Library');
+
+INSERT INTO tags (tag_name) VALUES 
+('vinyl'),
+('nowplaying'),
+('np'),
+('newaddition'),
+('review'),
+('recommendation'),
+('jazz'),
+('soul'),
+('funk'),
+('hiphop'),
+('rock'),
+('blues'),
+('classical'),
+('r&b'),
+('rnb'),
+('electronic'),
+('reggae'),
+('country'),
+('dance');
