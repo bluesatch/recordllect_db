@@ -310,6 +310,48 @@ CREATE TABLE user_genres (
     CONSTRAINT fk_ug_genre FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE
 );
 
+--============================================================
+-- RATINGS AND REVIEWS
+--============================================================
+
+CREATE TABLE album_ratings (
+    rating_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_rating PRIMARY KEY (rating_id),
+    CONSTRAINT uq_rating UNIQUE (users_id, album_id),
+    CONSTRAINT fk_rating_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_rating_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
+);
+
+CREATE TABLE album_reviews (
+    review_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    body VARCHAR(350) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_review PRIMARY KEY (review_id),
+    CONSTRAINT uq_review UNIQUE (users_id, album_id),
+    CONSTRAINT fk_review_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
+);
+
+CREATE TABLE review_ratings (
+    review_rating_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    review_id BIGINT UNSIGNED NOT NULL,
+    helpful TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_review_rating PRIMARY KEY (review_rating_id),
+    CONSTRAINT uq_review_rating UNIQUE (users_id, review_id),
+    CONSTRAINT fk_rr_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_rr_review FOREIGN KEY (review_id) REFERENCES album_reviews(review_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
@@ -323,13 +365,18 @@ CREATE INDEX idx_follows_following ON follows (following_id);
 CREATE INDEX idx_user_albums_user ON user_albums (users_id);
 CREATE INDEX idx_user_albums_album ON user_albums (album_id);
 
--- INDEXES FOR PERFORMANCE
+
 CREATE INDEX idx_posts_users ON posts(users_id);
 CREATE INDEX idx_posts_created ON posts(created_at);
 CREATE INDEX idx_comments_post ON comments(post_id);
 CREATE INDEX idx_replies_comment ON replies(comment_id);
 CREATE INDEX idx_post_likes_post ON post_likes(post_id);
 CREATE INDEX idx_comment_likes_comment ON comment_likes(comment_id);
+
+CREATE INDEX idx_ratings_album ON album_ratings(album_id);
+CREATE INDEX idx_reviews_album ON album_reviews(album_id);
+CREATE INDEX idx_reviews_user ON album_reviews(users_id);
+CREATE INDEX idx_review_ratings_review ON review_ratings(review_id);
 
 -- =============================================================
 -- VIEWS
