@@ -352,6 +352,21 @@ CREATE TABLE review_ratings (
     CONSTRAINT fk_rr_review FOREIGN KEY (review_id) REFERENCES album_reviews(review_id) ON DELETE CASCADE
 );
 
+--==============================================================
+-- NOW_PLAYING
+--==============================================================
+
+CREATE TABLE now_playing (
+    now_playing_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL UNIQUE,
+    album_id BIGINT UNSIGNED NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_now_playing PRIMARY KEY (now_playing_id),
+    CONSTRAINT uq_now_playing UNIQUE (users_id),
+    CONSTRAINT fk_np_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_np_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
