@@ -367,6 +367,21 @@ CREATE TABLE now_playing (
     CONSTRAINT fk_np_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
 );
 
+--==============================================================
+-- BLOCKED_USERS
+--==============================================================
+
+CREATE TABLE blocked_users (
+    block_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    blocker_id BIGINT UNSIGNED NOT NULL,
+    blocked_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_block PRIMARY KEY (block_id),
+    CONSTRAINT uq_block UNIQUE (blocker_id, blocked_id),
+    CONSTRAINT fk_blocker FOREIGN KEY (blocker_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_blocked FOREIGN KEY (blocked_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
@@ -392,6 +407,9 @@ CREATE INDEX idx_ratings_album ON album_ratings(album_id);
 CREATE INDEX idx_reviews_album ON album_reviews(album_id);
 CREATE INDEX idx_reviews_user ON album_reviews(users_id);
 CREATE INDEX idx_review_ratings_review ON review_ratings(review_id);
+
+CREATE INDEX idx_blocked_blocker ON blocked_users(blocker_id);
+CREATE INDEX idx_blocked_blocked ON blocked_users(blocked_id);
 
 -- =============================================================
 -- VIEWS
