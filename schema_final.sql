@@ -160,6 +160,8 @@ CREATE TABLE albums (
     release_year YEAR NULL DEFAULT NULL,
     duration_seconds INT UNSIGNED NULL DEFAULT NULL,
     album_image_url VARCHAR(2048) NULL DEFAULT NULL,
+    discogs_id INT UNSIGNED NULL UNIQUE,
+    source ENUM('discogs', 'manual', 'admin') NOT NULL DEFAULT 'manual',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_album PRIMARY KEY (album_id),
@@ -382,6 +384,24 @@ CREATE TABLE blocked_users (
     CONSTRAINT fk_blocked FOREIGN KEY (blocked_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
+--==============================================================
+-- REPORTS
+--==============================================================
+
+CREATE TABLE reports (
+    report_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    reported_by BIGINT UNSIGNED NOT NULL,
+    reason VARCHAR(500) NOT NULL,
+    status ENUM('pending', 'resolved', 'dismissed') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_report PRIMARY KEY (report_id),
+    CONSTRAINT uq_report UNIQUE (album_id, reported_by),
+    CONSTRAINT fk_report_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE,
+    CONSTRAINT fk_report_user FOREIGN KEY (reported_by) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
@@ -410,6 +430,9 @@ CREATE INDEX idx_review_ratings_review ON review_ratings(review_id);
 
 CREATE INDEX idx_blocked_blocker ON blocked_users(blocker_id);
 CREATE INDEX idx_blocked_blocked ON blocked_users(blocked_id);
+
+CREATE INDEX idx_reports_album ON reports(album_id);
+CREATE INDEX idx_reports_status ON reports(status);
 
 -- =============================================================
 -- VIEWS
