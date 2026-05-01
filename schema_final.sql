@@ -178,6 +178,20 @@ CREATE TABLE album_genres (
     CONSTRAINT fk_ag_genre FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON DELETE RESTRICT
 );
 
+--==============================================================
+-- TRACKS 
+--==============================================================
+CREATE TABLE tracks (
+    track_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    position VARCHAR(10) NULL,
+    title VARCHAR(255) NOT NULL,
+    duration VARCHAR(10) NULL,
+    track_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    CONSTRAINT pk_track PRIMARY KEY (track_id),
+    CONSTRAINT fk_track_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- USER COLLECTIONS
 -- =============================================================
@@ -402,6 +416,31 @@ CREATE TABLE reports (
     CONSTRAINT fk_report_user FOREIGN KEY (reported_by) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
+--==============================================================
+-- NOTIFICATIONS
+--==============================================================
+CREATE TABLE notifications (
+    notification_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    recipient_id BIGINT UNSIGNED NOT NULL,
+    sender_id BIGINT UNSIGNED NOT NULL,
+    type ENUM(
+        'like_post',
+        'like_comment',
+        'comment',
+        'reply',
+        'follow',
+        'repost',
+        'wantlist_match'
+    ) NOT NULL,
+    reference_id BIGINT UNSIGNED NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_notification PRIMARY KEY (notification_id),
+    CONSTRAINT fk_notif_recipient FOREIGN KEY (recipient_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_notif_sender FOREIGN KEY (sender_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
@@ -433,6 +472,11 @@ CREATE INDEX idx_blocked_blocked ON blocked_users(blocked_id);
 
 CREATE INDEX idx_reports_album ON reports(album_id);
 CREATE INDEX idx_reports_status ON reports(status);
+
+CREATE INDEX idx_tracks_album ON tracks(album_id);
+
+CREATE INDEX idx_notif_recipient ON notifications(recipient_id);
+CREATE INDEX idx_notif_read ON notifications(recipient_id, is_read);
 
 -- =============================================================
 -- VIEWS
