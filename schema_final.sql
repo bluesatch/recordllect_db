@@ -441,6 +441,36 @@ CREATE TABLE notifications (
     CONSTRAINT fk_notif_sender FOREIGN KEY (sender_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
+--==============================================================
+-- REPOSTS 
+--==============================================================
+CREATE TABLE reposts (
+    repost_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    users_id BIGINT UNSIGNED NOT NULL,
+    post_id BIGINT UNSIGNED NOT NULL,
+    quote VARCHAR(500) NULL DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_repost PRIMARY KEY (repost_id),
+    CONSTRAINT uq_repost UNIQUE (users_id, post_id),
+    CONSTRAINT fk_repost_user FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_repost_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
+);
+
+--==============================================================
+-- FEATURED ALBUMS
+--==============================================================
+CREATE TABLE featured_albums (
+    featured_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    album_id BIGINT UNSIGNED NOT NULL,
+    added_by BIGINT UNSIGNED NOT NULL,
+    featured_week DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_featured PRIMARY KEY (featured_id),
+    CONSTRAINT uq_featured UNIQUE (album_id, featured_week),
+    CONSTRAINT fk_featured_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE,
+    CONSTRAINT fk_featured_admin FOREIGN KEY (added_by) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
 -- =============================================================
 -- INDEXES
 -- =============================================================
@@ -478,6 +508,10 @@ CREATE INDEX idx_tracks_album ON tracks(album_id);
 CREATE INDEX idx_notif_recipient ON notifications(recipient_id);
 CREATE INDEX idx_notif_read ON notifications(recipient_id, is_read);
 
+CREATE INDEX idx_reposts_user ON reposts(users_id);
+CREATE INDEX idx_reposts_post ON reposts(post_id);
+
+CREATE INDEX idx_featured_week ON featured_albums(featured_week);
 -- =============================================================
 -- VIEWS
 -- =============================================================
