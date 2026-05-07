@@ -464,11 +464,42 @@ CREATE TABLE featured_albums (
     album_id BIGINT UNSIGNED NOT NULL,
     added_by BIGINT UNSIGNED NOT NULL,
     featured_week DATE NOT NULL,
+    sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER featured_week,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_featured PRIMARY KEY (featured_id),
     CONSTRAINT uq_featured UNIQUE (album_id, featured_week),
     CONSTRAINT fk_featured_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE,
     CONSTRAINT fk_featured_admin FOREIGN KEY (added_by) REFERENCES users(users_id) ON DELETE CASCADE
+);
+
+--==============================================================
+-- DIRECT MESSAGING 
+--==============================================================
+CREATE TABLE conversations (
+    conversation_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    user_one_id BIGINT UNSIGNED NOT NULL,
+    user_two_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_conversations PRIMARY KEY (conversation_id),
+    CONSTRAINT uq_conversation UNIQUE (user_one_id, user_two_id),
+    CONSTRAINT fk_conversation_user_one FOREIGN KEY (user_one_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT fk_conversation_user_two FOREIGN KEY (user_two_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT chk_different_users CHECK (user_one_id != user_two_id)
+);
+
+CREATE TABLE messages (
+    message_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    conversation_id BIGINT UNSIGNED NOT NULL,
+    sender_id BIGINT UNSIGNED NOT NULL,
+    body TEXT NULL,
+    image_url VARCHAR(2048) NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_messages PRIMARY KEY (message_id),
+    CONSTRAINT fk_message_conversation FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id) ON DELETE CASCADE,
+    CONSTRAINT fk_message_sender FOREIGN KEY (sender_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    CONSTRAINT chk_message_content CHECK (body IS NOT NULL OR image_url IS NOT NULL)
 );
 
 -- =============================================================
@@ -512,6 +543,11 @@ CREATE INDEX idx_reposts_user ON reposts(users_id);
 CREATE INDEX idx_reposts_post ON reposts(post_id);
 
 CREATE INDEX idx_featured_week ON featured_albums(featured_week);
+
+CREATE INDEX idx_messages_conversation ON messages(conversation_id, created_at);
+CREATE INDEX idx_conversations_user_one ON conversations(user_one_id);
+CREATE INDEX idx_conversations_user_two ON conversations(user_two_id);
+CREATE INDEX idx_messages_unread ON messages(conversation_id, is_read);
 -- =============================================================
 -- VIEWS
 -- =============================================================
