@@ -430,7 +430,8 @@ CREATE TABLE notifications (
         'reply',
         'follow',
         'repost',
-        'wantlist_match'
+        'wantlist_match',
+        'mention'
     ) NOT NULL,
     reference_id BIGINT UNSIGNED NOT NULL,
     message VARCHAR(255) NOT NULL,
