@@ -21,6 +21,11 @@ CREATE TABLE users (
     country VARCHAR(100) DEFAULT 'US',
     status ENUM('active', 'inactive', 'suspended', 'pending_verification') NOT NULL DEFAULT 'pending_verification',
     email_verified_at TIMESTAMP NULL DEFAULT NULL,
+    is_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER is_admin,
+    verification_token = VARCHAR(255) NULL AFTER is_verified,
+    verification_token_expires TIMESTAMP NULL AFTER verification_token,
+    reset_token VARCHAR(255) NULL AFTER verification_token_expires,
+    reset_token_expires TIMESTAMP NULL AFTER reset_token,
     profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
     bio VARCHAR(500) NULL DEFAULT NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0,
@@ -506,6 +511,8 @@ CREATE TABLE messages (
 -- =============================================================
 -- INDEXES
 -- =============================================================
+CREATE INDEX idx_verification_token ON users(verification_token);
+CREATE INDEX idx_reset_token ON users(reset_token);
 
 CREATE INDEX idx_albums_performer ON albums (performer_id);
 CREATE INDEX idx_albums_label ON albums (label_id);
