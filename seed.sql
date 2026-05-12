@@ -1,4 +1,4 @@
-USE `album_db`;
+-- USE `album_db`;
 
 -- =============================================================
 -- SEED DATA — generated from Discogs export (satchelpage413)
@@ -633,8 +633,7 @@ INSERT IGNORE INTO labels (label_name) VALUES
 -- We insert performers first, capture the starting auto_increment,
 -- then insert artists referencing the correct performer_ids
 
-SET @perf_start = (SELECT AUTO_INCREMENT FROM information_schema.TABLES
-    WHERE TABLE_SCHEMA = 'album_db' AND TABLE_NAME = 'performers');
+SET @perf_start = 1;
 
 INSERT INTO performers (performer_type) VALUES
     ('artist'),
