@@ -183,9 +183,9 @@ CREATE TABLE album_genres (
     CONSTRAINT fk_ag_genre FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON DELETE RESTRICT
 );
 
---==============================================================
+-- ==============================================================
 -- TRACKS 
---==============================================================
+-- ==============================================================
 CREATE TABLE tracks (
     track_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
     album_id BIGINT UNSIGNED NOT NULL,
