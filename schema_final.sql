@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `album_db`;
-CREATE DATABASE `album_db`;
-USE `album_db`;
+-- DROP DATABASE IF EXISTS `album_db`;
+-- CREATE DATABASE `album_db`;
+-- USE `album_db`;
 
 -- =============================================================
 -- USERS
@@ -21,11 +21,11 @@ CREATE TABLE users (
     country VARCHAR(100) DEFAULT 'US',
     status ENUM('active', 'inactive', 'suspended', 'pending_verification') NOT NULL DEFAULT 'pending_verification',
     email_verified_at TIMESTAMP NULL DEFAULT NULL,
-    is_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER is_admin,
-    verification_token = VARCHAR(255) NULL AFTER is_verified,
-    verification_token_expires TIMESTAMP NULL AFTER verification_token,
-    reset_token VARCHAR(255) NULL AFTER verification_token_expires,
-    reset_token_expires TIMESTAMP NULL AFTER reset_token,
+    is_verified TINYINT(1) NOT NULL DEFAULT 0,
+    verification_token VARCHAR(255) NULL,
+    verification_token_expires TIMESTAMP NULL,
+    reset_token VARCHAR(255) NULL,
+    reset_token_expires TIMESTAMP NULL,
     profile_image_url VARCHAR(2048) NULL DEFAULT NULL,
     bio VARCHAR(500) NULL DEFAULT NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0,
@@ -605,10 +605,10 @@ GROUP BY ar.artist_id;
 -- SECURITY -- replace 'your_strong_password_here' before running
 -- =============================================================
 
-CREATE USER IF NOT EXISTS 'album_app'@'localhost' IDENTIFIED BY 'your_strong_password_here';
-GRANT SELECT, INSERT, UPDATE, DELETE ON album_db.* TO 'album_app'@'localhost';
-GRANT SHOW VIEW ON album_db.* TO 'album_app'@'localhost';
-FLUSH PRIVILEGES;
+-- CREATE USER IF NOT EXISTS 'album_app'@'localhost' IDENTIFIED BY 'your_strong_password_here';
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON album_db.* TO 'album_app'@'localhost';
+-- GRANT SHOW VIEW ON album_db.* TO 'album_app'@'localhost';
+-- FLUSH PRIVILEGES;
 
 -- =============================================================
 -- SEED DATA
