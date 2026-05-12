@@ -331,9 +331,9 @@ CREATE TABLE user_genres (
     CONSTRAINT fk_ug_genre FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE
 );
 
---============================================================
+-- ============================================================
 -- RATINGS AND REVIEWS
---============================================================
+-- ============================================================
 
 CREATE TABLE album_ratings (
     rating_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -373,9 +373,9 @@ CREATE TABLE review_ratings (
     CONSTRAINT fk_rr_review FOREIGN KEY (review_id) REFERENCES album_reviews(review_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- NOW_PLAYING
---==============================================================
+-- ==============================================================
 
 CREATE TABLE now_playing (
     now_playing_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -388,9 +388,9 @@ CREATE TABLE now_playing (
     CONSTRAINT fk_np_album FOREIGN KEY (album_id) REFERENCES albums(album_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- BLOCKED_USERS
---==============================================================
+-- ==============================================================
 
 CREATE TABLE blocked_users (
     block_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -403,9 +403,9 @@ CREATE TABLE blocked_users (
     CONSTRAINT fk_blocked FOREIGN KEY (blocked_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- REPORTS
---==============================================================
+-- ==============================================================
 
 CREATE TABLE reports (
     report_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -421,9 +421,9 @@ CREATE TABLE reports (
     CONSTRAINT fk_report_user FOREIGN KEY (reported_by) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- NOTIFICATIONS
---==============================================================
+-- ==============================================================
 CREATE TABLE notifications (
     notification_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
     recipient_id BIGINT UNSIGNED NOT NULL,
@@ -447,9 +447,9 @@ CREATE TABLE notifications (
     CONSTRAINT fk_notif_sender FOREIGN KEY (sender_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- REPOSTS 
---==============================================================
+-- ==============================================================
 CREATE TABLE reposts (
     repost_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
     users_id BIGINT UNSIGNED NOT NULL,
@@ -462,15 +462,15 @@ CREATE TABLE reposts (
     CONSTRAINT fk_repost_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- FEATURED ALBUMS
---==============================================================
+-- ==============================================================
 CREATE TABLE featured_albums (
     featured_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
     album_id BIGINT UNSIGNED NOT NULL,
     added_by BIGINT UNSIGNED NOT NULL,
     featured_week DATE NOT NULL,
-    sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER featured_week,
+    sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_featured PRIMARY KEY (featured_id),
     CONSTRAINT uq_featured UNIQUE (album_id, featured_week),
@@ -478,9 +478,9 @@ CREATE TABLE featured_albums (
     CONSTRAINT fk_featured_admin FOREIGN KEY (added_by) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
---==============================================================
+-- ==============================================================
 -- DIRECT MESSAGING 
---==============================================================
+-- ==============================================================
 CREATE TABLE conversations (
     conversation_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
     user_one_id BIGINT UNSIGNED NOT NULL,
@@ -644,23 +644,21 @@ INSERT INTO genres (genre_name) VALUES
     ('Vocal'),
     ('Rap'),
     ('Soundtrack'),
-    ('World');
-
-INSERT INTO genres (genre_name) VALUES 
-('Neo-Soul'),
-('Hard Bop'),
-('Heavy Metal'),
-('Prog Rock'),
-('Comedy'),
-('New Wave'),
-('Punk Rock'),
-('Techno'),
-('House'),
-('Synth'),
-('African Highlife'),
-('Miscellaneous'),
-('Compilation'),
-('Library');
+    ('World'),
+    ('Neo-Soul'),
+    ('Hard Bop'),
+    ('Heavy Metal'),
+    ('Prog Rock'),
+    ('Comedy'),
+    ('New Wave'),
+    ('Punk Rock'),
+    ('Techno'),
+    ('House'),
+    ('Synth'),
+    ('African Highlife'),
+    ('Miscellaneous'),
+    ('Compilation'),
+    ('Library');
 
 INSERT INTO tags (tag_name) VALUES 
 ('vinyl'),
